@@ -7,7 +7,7 @@ Extension of EventEmitter which implements the concept of event binding within a
 ## Example
 
 ```js
-const EventEmitter = Lifespan.EventEmitter;
+const { EventEmitter } = require('lifespan');
 
 // life will end in 1000ms
 const life = new Promise((resolve) => setTimeout(resolve, 1000));
