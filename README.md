@@ -1,5 +1,5 @@
 Lifespan
-========
+--------
 
 Syntactic sugar over Promise to implement "lifespan" semantics. The underlying Promise is purposedly not rejectable.
 
