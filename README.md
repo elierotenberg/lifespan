@@ -35,3 +35,11 @@ setTimeout(() => {
   clearInterval(j);
 }, 2000);
 ```
+
+## Mixin with your own EventEmitter
+
+Internally `within` is just API sugar (check the source code). You can mix it in with any EventEmitter implementation that implements `on(event, fn)` and `removeListener(event, fn)`.
+You can easily mix it in:
+```js
+MyEventEmitter.prototype.within = require('lifespan').EventEmitter.prototype.within;
+```
