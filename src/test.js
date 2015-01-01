@@ -1,13 +1,3 @@
-Lifespan
-========
-
-Syntactic sugar over Promise to implement "lifespan" semantics. The underlying Promise is purposedly not rejectable.
-
-
-## Example
-
-```js
-// create a new Lifespan object
 const Lifespan = require('../');
 const { EventEmitter } = require('events');
 
@@ -24,7 +14,6 @@ events.addListener('heartbeat', onHeartbeat);
 // whenever lifespan dies,
 lifespan.dies.then(() => events.removeListener('heartbeat', onHeartbeat));
 // alternatively
-lifespan.onDeath(() => events.removeListener('heartbeat', onHeartbeat));
 // start beating
 events.emit('heartbeat');
 let i = setInterval(() => events.emit('heartbeat'), 100);
@@ -36,22 +25,3 @@ setTimeout(() => {
   callCount.should.be.exactly(10);
   clearInterval(i);
 }, 2000);
-```
-
-## API
-
-`new Lifespan(): new Lifespan`
-
-Creates a new Lifespan object.
-
-`get lifespan.dies: Promise`
-
-Promise for the death of `lifespan`.
-
-`lifespan.onDeath(fn: Function): Promise`
-
-Alias for `lifespan.dies.then(fn)`. Returns the underlying Promise.
-
-`lifespan.kill(): Promise`
-
-Resolved the underlying promise and returns it (so that `lifespan.kill().then(fn)` produces `fn` to execute after all the previously attached callbacks).
