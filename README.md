@@ -10,9 +10,7 @@ Extension of EventEmitter which implements the concept of event binding within a
 const EventEmitter = Lifespan.EventEmitter;
 
 // life will end in 1000ms
-const life = new Promise((resolve) => {
-  setTimeout(resolve, 1000);
-});
+const life = new Promise((resolve) => setTimeout(resolve, 1000));
 const events = new EventEmitter();
 let hearthbeatCount = 0;
 let breathCount = 0;

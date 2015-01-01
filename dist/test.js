@@ -6,12 +6,14 @@ var EventEmitter = Lifespan.EventEmitter;
 
 // life will end in 1000ms
 var life = new Promise(function (resolve) {
-  setTimeout(resolve, 1000);
+  return setTimeout(resolve, 1000);
 });
 var events = new EventEmitter();
 var hearthbeatCount = 0;
 var breathCount = 0;
-events.within(life).on("heartbeat", function () {
+events.within(life) // bind events listeners that will only last
+// as long as life is not resolved
+.on("heartbeat", function () {
   return hearthbeatCount = hearthbeatCount + 1;
 }).on("breath", function () {
   return breathCount = breathCount + 1;
