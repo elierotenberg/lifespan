@@ -1,27 +1,29 @@
 const Lifespan = require('../');
-const { EventEmitter } = require('events');
 
-// create a new Lifespan object
-let lifespan = new Lifespan();
-let callCount = 0;
-function onHeartbeat() {
-  callCount = callCount + 1;
-  console.log('I am still alive', callCount);
-}
-let events = new EventEmitter();
+const EventEmitter = Lifespan.EventEmitter;
 
-events.addListener('heartbeat', onHeartbeat);
-// whenever lifespan dies,
-lifespan.dies.then(() => events.removeListener('heartbeat', onHeartbeat));
-// alternatively
-// start beating
-events.emit('heartbeat');
-let i = setInterval(() => events.emit('heartbeat'), 100);
-// kill the lifespan in 1000ms
-setTimeout(() => lifespan.kill(), 1000);
+// life will end in 1000ms
+const life = new Promise((resolve) => {
+  setTimeout(resolve, 1000);
+});
+const events = new EventEmitter();
+let hearthbeatCount = 0;
+let breathCount = 0;
+events.within(life) // bind events listeners that will only last
+                    // as long as life is not resolved
+.on('heartbeat', () => hearthbeatCount = hearthbeatCount + 1)
+.on('breath', () => breathCount = breathCount + 1);
 
-// check that the handler has been called exactly 10 times
+function heartbeat() { events.emit('heartbeat'); }
+function breath() { events.emit('breath'); }
+heartbeat();
+const i = setInterval(heartbeat, 100);
+breath();
+const j = setInterval(breath, 200);
+
 setTimeout(() => {
-  callCount.should.be.exactly(10);
+  hearthbeatCount.should.be.exactly(10);
+  breathCount.should.be.exactly(5);
   clearInterval(i);
+  clearInterval(j);
 }, 2000);

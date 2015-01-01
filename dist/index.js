@@ -1,37 +1,43 @@
 "use strict";
 
-var _prototypeProperties = function (child, staticProps, instanceProps) {
-  if (staticProps) Object.defineProperties(child, staticProps);
-  if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-};
-
-require("6to5/polyfill");var _ = require("lodash");var should = require("should");var Promise = (global || window).Promise = require("bluebird");var __DEV__ = process.env.NODE_ENV !== "production";var __PROD__ = !__DEV__;var __BROWSER__ = typeof window === "object";var __NODE__ = !__BROWSER__;__DEV__ ? Promise.longStackTraces() : void 0;var Lifespan = function Lifespan() {
-  var _this = this;
-  this._promise = new Promise(function (resolve, reject) {
-    return _this._resolve = resolve || reject;
+var _inherits = function (child, parent) {
+  child.prototype = Object.create(parent && parent.prototype, {
+    constructor: {
+      value: child,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
   });
+  if (parent) child.__proto__ = parent;
 };
 
-Lifespan.prototype.kill = function () {
-  this._resolve();
-  return this._promise;
-};
+require("6to5/polyfill");var _ = require("lodash");var should = require("should");var Promise = (global || window).Promise = require("bluebird");var __DEV__ = process.env.NODE_ENV !== "production";var __PROD__ = !__DEV__;var __BROWSER__ = typeof window === "object";var __NODE__ = !__BROWSER__;__DEV__ ? Promise.longStackTraces() : void 0;var VanillaEventEmitter = require("events").EventEmitter;
 
-Lifespan.prototype.onDeath = function (fn) {
-  return this.death.then(fn);
-};
+var EventEmitter = (function () {
+  var _VanillaEventEmitter = VanillaEventEmitter;
+  var EventEmitter = function EventEmitter() {
+    if (_VanillaEventEmitter) {
+      _VanillaEventEmitter.apply(this, arguments);
+    }
+  };
 
-_prototypeProperties(Lifespan, null, {
-  dies: {
-    get: function () {
-      return this._promise;
-    },
-    enumerable: true
-  }
-});
+  _inherits(EventEmitter, _VanillaEventEmitter);
 
-Object.assign(Lifespan.prototype, {
-  _promise: null,
-  _resolve: null });
+  EventEmitter.prototype.within = function (lifespan) {
+    var events = this;
+    return {
+      on: function (event, fn) {
+        events.on(event, fn);
+        lifespan.then(function () {
+          return events.removeListener(event, fn);
+        });
+        return this;
+      }
+    };
+  };
 
-module.exports = Lifespan;
+  return EventEmitter;
+})();
+
+module.exports = { EventEmitter: EventEmitter };
