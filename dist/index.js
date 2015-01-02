@@ -12,32 +12,42 @@ var _inherits = function (child, parent) {
   if (parent) child.__proto__ = parent;
 };
 
-require("6to5/polyfill");var _ = require("lodash");var should = require("should");var Promise = (global || window).Promise = require("bluebird");var __DEV__ = process.env.NODE_ENV !== "production";var __PROD__ = !__DEV__;var __BROWSER__ = typeof window === "object";var __NODE__ = !__BROWSER__;__DEV__ ? Promise.longStackTraces() : void 0;var VanillaEventEmitter = require("events").EventEmitter;
-
-var EventEmitter = (function () {
-  var _VanillaEventEmitter = VanillaEventEmitter;
-  var EventEmitter = function EventEmitter() {
-    if (_VanillaEventEmitter) {
-      _VanillaEventEmitter.apply(this, arguments);
+require("6to5/polyfill");var _ = require("lodash");var should = require("should");var Promise = (global || window).Promise = require("bluebird");var __DEV__ = process.env.NODE_ENV !== "production";var __PROD__ = !__DEV__;var __BROWSER__ = typeof window === "object";var __NODE__ = !__BROWSER__;__DEV__ ? Promise.longStackTraces() : void 0;function within(lifespan) {
+  var events = this;
+  if (__DEV__) {
+    lifespan.should.have.property("then").which.is.a.Function;
+  }
+  return {
+    on: function (event, fn) {
+      events.addListener(event, fn);
+      lifespan.then(function () {
+        return events.removeListener(event, fn);
+      });
+      return this;
     }
   };
+}
 
-  _inherits(EventEmitter, _VanillaEventEmitter);
-
-  EventEmitter.prototype.within = function (lifespan) {
-    var events = this;
-    return {
-      on: function (event, fn) {
-        events.on(event, fn);
-        lifespan.then(function () {
-          return events.removeListener(event, fn);
-        });
-        return this;
+function createMixin(EventEmitterImplementation) {
+  if (__DEV__) {
+    EventEmitterImplementation.prototype.should.have.property("addListener").which.is.a.Function;
+    EventEmitterImplementation.prototype.should.have.property("removeListener").which.is.a.Function;
+  }
+  var Mixin = (function () {
+    var _EventEmitterImplementation = EventEmitterImplementation;
+    var Mixin = function Mixin() {
+      if (_EventEmitterImplementation) {
+        _EventEmitterImplementation.apply(this, arguments);
       }
     };
-  };
 
-  return EventEmitter;
-})();
+    _inherits(Mixin, _EventEmitterImplementation);
 
-module.exports = { EventEmitter: EventEmitter };
+    return Mixin;
+  })();
+
+  Object.assign(Mixin.prototype, { within: within });
+  return Mixin;
+}
+
+module.exports = createMixin;
