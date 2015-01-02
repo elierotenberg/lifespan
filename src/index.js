@@ -22,4 +22,17 @@ function createMixin(EventEmitterImplementation) {
   return Mixin;
 }
 
+function wrap(events) {
+  if(__DEV__) {
+    events.should.have.property('addListener').which.is.a.Function;
+    events.should.have.property('removeListener').which.is.a.Function;
+  }
+  if(events.within === void 0) {
+    Object.assign(events, { within });
+  }
+  return events;
+}
+
+Object.assign(createMixin, { wrap });
+
 module.exports = createMixin;

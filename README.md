@@ -50,3 +50,13 @@ VanillaEventEmitter.prototype.should.not.have.property('within');
 Internally `within` is just API sugar (check the source code). You can mix it in with any EventEmitter implementation that implements `addListener(event, fn)` and `removeListener(event, fn)`.
 
 `createMixin(OriginalEventEmitter)` returns a completely new class and won't modify the prototype of `OriginalEventEmitter`. However it will extend it using ES6' `extends` so `instanceof OriginalEventEmitter` will appropriately return `true` on instances of the mixin class.
+
+
+You may also mixin an instance directly instead of mixing in a constructor. In this case, just use `wrap(instance)` and it will mixin the instance and return a chainable `this`:
+
+```js
+const { EventEmitter } = require('events');
+const { wrap } = require('lifespan');
+const events = wrap(new EventEmitter());
+events.within(...)
+```
