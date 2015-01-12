@@ -1,46 +1,86 @@
 "use strict";
 
-require("6to5/polyfill");var _ = require("lodash");var should = require("should");var Promise = (global || window).Promise = require("bluebird");var __DEV__ = process.env.NODE_ENV !== "production";var __PROD__ = !__DEV__;var __BROWSER__ = typeof window === "object";var __NODE__ = !__BROWSER__;__DEV__ ? Promise.longStackTraces() : void 0;var VanillaEventEmitter = require("events").EventEmitter;
-var EventEmitter = require("../")(VanillaEventEmitter);
+var _interopRequire = function (obj) {
+  return obj && (obj["default"] || obj);
+};
 
-// life will end in 1000ms
-var life = new Promise(function (resolve) {
-  return setTimeout(resolve, 1000);
+require("6to5/polyfill");
+var _ = require("lodash");
+var should = require("should");
+var Promise = (global || window).Promise = require("bluebird");
+var __DEV__ = process.env.NODE_ENV !== "production";
+var __PROD__ = !__DEV__;
+var __BROWSER__ = typeof window === "object";
+var __NODE__ = !__BROWSER__;
+if (__DEV__) {
+  Promise.longStackTraces();
+  Error.stackTraceLimit = Infinity;
+}
+var Lifespan = _interopRequire(require("../"));
+
+var released = {};
+
+released.a = false;
+var count = 0;
+var a = new Lifespan().onRelease(function () {
+  return released.a = true;
 });
-var events = new EventEmitter();
-var heartbeatCount = 0;
-var breathCount = 0;
-// 'within' is our new method. it returns an object with a chainable 'on' method
-// which automactly unbinds listener when the promise is resolved
-events.within(life) // bind events listeners that will only last
-// as long as life is not resolved
-.on("heartbeat", function () {
-  return heartbeatCount = heartbeatCount + 1;
-}).on("breath", function () {
-  return breathCount = breathCount + 1;
+var i = setInterval(function () {
+  return count = count + 1;
+}, 1000);
+a.onRelease(function () {
+  return clearInterval(i);
 });
 
-function heartbeat() {
-  events.emit("heartbeat");
-}
-function breath() {
-  events.emit("breath");
-}
-heartbeat();
-var i = setInterval(heartbeat, 100);
-breath();
-var j = setInterval(breath, 200);
+released.b = false;
+var b = new Lifespan();
+b.onRelease(function () {
+  return released.b = true;
+});
+setTimeout(b.release, 5500);
+b.onRelease(function () {
+  return a.release();
+});
+
+released.c1 = released.c2 = released.c3 = false;
+var c1 = new Lifespan().onRelease(function () {
+  return released.c1 = true;
+});
+var c2 = new Lifespan().onRelease(function () {
+  return released.c2 = true;
+});
+var c3 = new Lifespan().onRelease(function () {
+  return released.c3 = true;
+});
+
+released.c4 = false;
+var c4 = Lifespan.race(c1, c2, c3).onRelease(function () {
+  return released.c4 = true;
+});
+c1.release();
+released.c4.should.be["true"];
+
+released.d1 = released.d2 = released.d3 = false;
+var d1 = new Lifespan().onRelease(function () {
+  return released.d1 = true;
+});
+var d2 = new Lifespan().onRelease(function () {
+  return released.d2 = true;
+});
+var d3 = Lifespan.join(d1, d2).onRelease(function () {
+  return released.d3 = true;
+});
+d1.release();
+released.d3.should.be["false"];
+d2.release();
+released.d3.should.be["true"];
 
 setTimeout(function () {
-  heartbeatCount.should.be.exactly(10);
-  breathCount.should.be.exactly(5);
-  clearInterval(i);
-  clearInterval(j);
-}, 2000);
+  released.a.should.be["false"];
+  count.should.be.exactly(2);
+}, 2200);
 
-// instanceof works as expected
-events.should.be.an.instanceOf(VanillaEventEmitter);
-events.should.be.an.instanceOf(EventEmitter);
-// VanillaEventEmitter prototype is left untouched
-VanillaEventEmitter.should.not.be.exactly(EventEmitter);
-VanillaEventEmitter.prototype.should.not.have.property("within");
+setTimeout(function () {
+  released.a.should.be["true"];
+  count.should.be.exactly(5);
+}, 6000);

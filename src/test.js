@@ -1,36 +1,44 @@
-const VanillaEventEmitter = require('events').EventEmitter;
-const EventEmitter = require('../')(VanillaEventEmitter);
+import Lifespan from '../';
 
-// life will end in 1000ms
-const life = new Promise((resolve) => setTimeout(resolve, 1000));
-const events = new EventEmitter();
-let heartbeatCount = 0;
-let breathCount = 0;
-// 'within' is our new method. it returns an object with a chainable 'on' method
-// which automactly unbinds listener when the promise is resolved
-events.within(life) // bind events listeners that will only last
-                    // as long as life is not resolved
-.on('heartbeat', () => heartbeatCount = heartbeatCount + 1)
-.on('breath', () => breathCount = breathCount + 1);
+const released = {};
 
-function heartbeat() { events.emit('heartbeat'); }
-function breath() { events.emit('breath'); }
-heartbeat();
-const i = setInterval(heartbeat, 100);
-breath();
-const j = setInterval(breath, 200);
+released.a = false;
+let count = 0;
+const a = new Lifespan().onRelease(() => released.a = true);
+const i = setInterval(() => count = count + 1, 1000);
+a.onRelease(() => clearInterval(i));
+
+released.b = false;
+const b = new Lifespan();
+b.onRelease(() => released.b = true);
+setTimeout(b.release, 5500);
+b.onRelease(() => a.release());
+
+released.c1 = released.c2 = released.c3 = false;
+const c1 = new Lifespan().onRelease(() => released.c1 = true);
+const c2 = new Lifespan().onRelease(() => released.c2 = true);
+const c3 = new Lifespan().onRelease(() => released.c3 = true);
+
+released.c4 = false;
+const c4 = Lifespan.race(c1, c2, c3).onRelease(() => released.c4 = true);
+c1.release();
+released.c4.should.be.true;
+
+released.d1 = released.d2 = released.d3 = false;
+const d1 = new Lifespan().onRelease(() => released.d1 = true);
+const d2 = new Lifespan().onRelease(() => released.d2 = true);
+const d3 = Lifespan.join(d1, d2).onRelease(() => released.d3 = true);
+d1.release();
+released.d3.should.be.false;
+d2.release();
+released.d3.should.be.true;
 
 setTimeout(() => {
-  heartbeatCount.should.be.exactly(10);
-  breathCount.should.be.exactly(5);
-  clearInterval(i);
-  clearInterval(j);
-}, 2000);
+  released.a.should.be.false;
+  count.should.be.exactly(2);
+}, 2200);
 
-// instanceof works as expected
-events.should.be.an.instanceOf(VanillaEventEmitter);
-events.should.be.an.instanceOf(EventEmitter);
-// VanillaEventEmitter prototype is left untouched
-VanillaEventEmitter.should.not.be.exactly(EventEmitter);
-VanillaEventEmitter.prototype.should.not.have.property('within');
-
+setTimeout(() => {
+  released.a.should.be.true;
+  count.should.be.exactly(5);
+}, 6000);

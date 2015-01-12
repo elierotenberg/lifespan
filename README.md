@@ -1,94 +1,61 @@
-<<<<<<< HEAD
 Lifespan
---------
-
-Mixin of EventEmitter (or similar API) which implements the concept of event binding within a lifespan.
+========
 
 
-## Example
+Reify the lifespan of an object, a component, whatever... Its really just like an never-failing Promise which executes its callback synchronously.
 
 ```js
-const VanillaEventEmitter = require('events').EventEmitter;
-const EventEmitter = require('lifespan')(VanillaEventEmitter);
+const released = {};
 
-// life will end in 1000ms
-const life = new Promise((resolve) => setTimeout(resolve, 1000));
-const events = new EventEmitter();
-let heartbeatCount = 0;
-let breathCount = 0;
-// 'within' is our new method. it returns an object with a chainable 'on' method
-// which automactly unbinds listener when the promise is resolved
-events.within(life) // bind events listeners that will only last
-                    // as long as life is not resolved
-.on('heartbeat', () => heartbeatCount = heartbeatCount + 1)
-.on('breath', () => breathCount = breathCount + 1);
+released.a = false;
+let count = 0;
+const a = new Lifespan().onRelease(() => released.a = true);
+const i = setInterval(() => count = count + 1, 1000);
+a.onRelease(() => clearInterval(i));
 
-function heartbeat() { events.emit('heartbeat'); }
-function breath() { events.emit('breath'); }
-heartbeat();
-const i = setInterval(heartbeat, 100);
-breath();
-const j = setInterval(breath, 200);
+released.b = false;
+const b = new Lifespan();
+b.onRelease(() => released.b = true);
+setTimeout(b.release, 5500);
+b.onRelease(() => a.release());
+
+released.c1 = released.c2 = released.c3 = false;
+const c1 = new Lifespan().onRelease(() => released.c1 = true);
+const c2 = new Lifespan().onRelease(() => released.c2 = true);
+const c3 = new Lifespan().onRelease(() => released.c3 = true);
+
+released.c4 = false;
+const c4 = Lifespan.race(c1, c2, c3).onRelease(() => released.c4 = true);
+c1.release();
+released.c4.should.be.true;
+
+released.d1 = released.d2 = released.d3 = false;
+const d1 = new Lifespan().onRelease(() => released.d1 = true);
+const d2 = new Lifespan().onRelease(() => released.d2 = true);
+const d3 = Lifespan.join(d1, d2).onRelease(() => released.d3 = true);
+d1.release();
+released.d3.should.be.false;
+d2.release();
+released.d3.should.be.true;
 
 setTimeout(() => {
-  heartbeatCount.should.be.exactly(10);
-  breathCount.should.be.exactly(5);
-  clearInterval(i);
-  clearInterval(j);
-}, 2000);
+  released.a.should.be.false;
+  count.should.be.exactly(2);
+}, 2200);
 
-// instanceof works as expected
-events.should.be.an.instanceOf(VanillaEventEmitter);
-events.should.be.an.instanceOf(EventEmitter);
-// VanillaEventEmitter prototype is left untouched
-VanillaEventEmitter.should.not.be.exactly(EventEmitter);
-VanillaEventEmitter.prototype.should.not.have.property('within');
-
+setTimeout(() => {
+  released.a.should.be.true;
+  count.should.be.exactly(5);
+}, 6000);
 ```
 
-## Mixin with your own EventEmitter
+### Why not just use Promise?
 
-Internally `within` is just API sugar (check the source code). You can mix it in with any EventEmitter implementation that implements `addListener(event, fn)` and `removeListener(event, fn)`.
+Promise, when properly implemented (like `bluebird` does) are great. Really. But sometimes you just want to reifiy "something to call later", and these calls to be synchronous.
 
-`createMixin(OriginalEventEmitter)` returns a completely new class and won't modify the prototype of `OriginalEventEmitter`. However it will extend it using ES6' `extends` so `instanceof OriginalEventEmitter` will appropriately return `true` on instances of the mixin class.
+Thats where Lifespan comes handy.
 
 
-You may also mixin an instance directly instead of mixing in a constructor. In this case, just use `wrap(instance)` and it will mixin the instance and return a chainable `this`:
+### Use cases ?
 
-```js
-const { EventEmitter } = require('events');
-const { wrap } = require('lifespan');
-const events = wrap(new EventEmitter());
-events.within(...)
-```
-=======
-ES6 Starterkit
-==============
-
-The future is today!
-
-#### Usage
-
-1. Fork or clone this repository.
-2. (Optional) Edit `package.json` if you intent to publish your package on `npm`.
-3. `npm install` to install all the required dependencies from `npm`.
-4. Hack `src/index.js`.
-5. Build/rebuild using `gulp`.
-6. Don't forget to edit this `README.md` file.
-
-#### Features
-
-- Sanely configured `gulpfile.js`, `package.json`, `.gitignore`, `.editorconfig` and `.jshintrc`.
-- ES6 code from the `src` folder is transpiled into ES5 code in the `dist` folder via `6to5`.
-- Both CommonJS and ES6 modules are supported.
-- Several modules and variables are automatically injected in each module at transpile time. Check (and edit) `__prelude.js`.
-- `__DEV__` and `__PROD__` are boolean constants reflecting `process.env.NODE_ENV`. Best friends with `envify` and `uglify`.
-- `__BROWSER__` and `__NODE__` are boolean constants trying hard to reflect whether the code runs in the browser (via browserify/webpack) or in a NodeJS env.
-- `bluebird` implementation of `Promise` is injected into global scope, since its is so neat and it outperforms native `Promise`.
-- `should` is injected into each module, so you can do development-time assertions that are skipped in production, eg. `if(__DEV__) { n.should.be.a.Number; }`.
-- `_` (`lodash`) is also injected into each module.
-
-#### License
-
-MIT [Elie Rotenberg](http://elie.rotenberg.io) <[elie@rotenberg.io](mailto:elie@rotenberg.io)>
->>>>>>> starterkit/master
+EventEmitters, React Components, really anything when cleanup has to be performed at some point which is triggered manually.
