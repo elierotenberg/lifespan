@@ -1,3 +1,9 @@
+const _setInterval = global.setInterval;
+const _setTimeout = global.setTimeout;
+const _setImmediate = global.setImmediate;
+const _Promise = global.Promise;
+const _requestAnimationFrame = global.requestAnimationFrame;
+
 class Lifespan {
   constructor() {
     this._callbacks = [];
@@ -23,6 +29,44 @@ class Lifespan {
       this._callbacks.unshift(fn);
     }
     return this;
+  }
+
+  setInterval(fn, period) { // set an interval that will be cleared upon release
+    if(__DEV__) {
+      fn.should.be.a.Function;
+      period.should.be.a.Number.which.is.not.below(0);
+    }
+    const i = _setInterval(fn, period);
+    this.onRelease(() => clearInterval(i));
+  }
+
+  setTimeout(fn, delay) { // set a timeout that will be cleared upon release
+    if(__DEV__) {
+      fn.should.be.a.Function;
+      delay.should.be.a.Number.which.is.not.below(0);
+    }
+    const i = _setTimeout(fn, delay);
+    this.onRelease(() => clearTimeout(i));
+  }
+
+  setImmediate(fn) { // set an immediate that will be cleared upon release
+    if(__DEV__) {
+      fn.should.be.a.Function;
+    }
+    const i = _setImmediate(fn);
+    this.onRelease(() => clearImmediate(i));
+  }
+
+  Promise() { // returns a Promise that will be resolved after release (deferred callback)
+    return new _Promise((resolve) => this.onRelease(resolve));
+  }
+
+  requestAnimationFrame(fn) { // sets a next animation frame callback  that will be cleared upon release
+    if(__DEV__) {
+      fn.should.be.a.Function;
+    }
+    const i = _requestAnimationFrame(fn);
+    this.onRelease(() => cancelAnimationFrame(i));
   }
 
   static race(...lifespans) { // creates a new lifespan, which is released when any of the lifespans are released

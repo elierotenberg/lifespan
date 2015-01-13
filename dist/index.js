@@ -17,6 +17,12 @@ if (__DEV__) {
   Promise.longStackTraces();
   Error.stackTraceLimit = Infinity;
 }
+var _setInterval = global.setInterval;
+var _setTimeout = global.setTimeout;
+var _setImmediate = global.setImmediate;
+var _Promise = global.Promise;
+var _requestAnimationFrame = global.requestAnimationFrame;
+
 var Lifespan = (function () {
   function Lifespan() {
     this._callbacks = [];
@@ -94,6 +100,80 @@ var Lifespan = (function () {
           this._callbacks.unshift(fn);
         }
         return this;
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    setInterval: {
+      value: function (fn, period) {
+        // set an interval that will be cleared upon release
+        if (__DEV__) {
+          fn.should.be.a.Function;
+          period.should.be.a.Number.which.is.not.below(0);
+        }
+        var i = _setInterval(fn, period);
+        this.onRelease(function () {
+          return clearInterval(i);
+        });
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    setTimeout: {
+      value: function (fn, delay) {
+        // set a timeout that will be cleared upon release
+        if (__DEV__) {
+          fn.should.be.a.Function;
+          delay.should.be.a.Number.which.is.not.below(0);
+        }
+        var i = _setTimeout(fn, delay);
+        this.onRelease(function () {
+          return clearTimeout(i);
+        });
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    setImmediate: {
+      value: function (fn) {
+        // set an immediate that will be cleared upon release
+        if (__DEV__) {
+          fn.should.be.a.Function;
+        }
+        var i = _setImmediate(fn);
+        this.onRelease(function () {
+          return clearImmediate(i);
+        });
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    Promise: {
+      value: function () {
+        var _this = this;
+        // returns a Promise that will be resolved after release (deferred callback)
+        return new _Promise(function (resolve) {
+          return _this.onRelease(resolve);
+        });
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    requestAnimationFrame: {
+      value: function (fn) {
+        // sets a next animation frame callback  that will be cleared upon release
+        if (__DEV__) {
+          fn.should.be.a.Function;
+        }
+        var i = _requestAnimationFrame(fn);
+        this.onRelease(function () {
+          return cancelAnimationFrame(i);
+        });
       },
       writable: true,
       enumerable: true,
