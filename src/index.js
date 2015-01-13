@@ -20,7 +20,7 @@ class Lifespan {
       fn();
     }
     else {
-      this._callbacks.push(fn);
+      this._callbacks.unshift(fn);
     }
     return this;
   }
