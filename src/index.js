@@ -38,6 +38,7 @@ class Lifespan {
     }
     const i = _setInterval(fn, period);
     this.onRelease(() => clearInterval(i));
+    return this;
   }
 
   setTimeout(fn, delay) { // set a timeout that will be cleared upon release
@@ -47,6 +48,7 @@ class Lifespan {
     }
     const i = _setTimeout(fn, delay);
     this.onRelease(() => clearTimeout(i));
+    return this;
   }
 
   setImmediate(fn) { // set an immediate that will be cleared upon release
@@ -55,10 +57,7 @@ class Lifespan {
     }
     const i = _setImmediate(fn);
     this.onRelease(() => clearImmediate(i));
-  }
-
-  Promise() { // returns a Promise that will be resolved after release (deferred callback)
-    return new _Promise((resolve) => this.onRelease(resolve));
+    return this;
   }
 
   requestAnimationFrame(fn) { // sets a next animation frame callback  that will be cleared upon release
@@ -67,6 +66,11 @@ class Lifespan {
     }
     const i = _requestAnimationFrame(fn);
     this.onRelease(() => cancelAnimationFrame(i));
+    return this;
+  }
+
+  Promise() { // returns a Promise that will be resolved after release (deferred callback)
+    return new _Promise((resolve) => this.onRelease(resolve));
   }
 
   static race(...lifespans) { // creates a new lifespan, which is released when any of the lifespans are released
