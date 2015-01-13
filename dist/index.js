@@ -18,11 +18,11 @@ if (__DEV__) {
   Error.stackTraceLimit = Infinity;
 }
 var Lifespan = (function () {
-  var Lifespan = function Lifespan() {
+  function Lifespan() {
     this._callbacks = [];
     this._released = false;
     _.bindAll(this);
-  };
+  }
 
   _prototypeProperties(Lifespan, {
     race: {
@@ -91,7 +91,7 @@ var Lifespan = (function () {
         if (this._released) {
           fn();
         } else {
-          this._callbacks.push(fn);
+          this._callbacks.unshift(fn);
         }
         return this;
       },
