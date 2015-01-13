@@ -116,6 +116,7 @@ var Lifespan = (function () {
         this.onRelease(function () {
           return clearInterval(i);
         });
+        return this;
       },
       writable: true,
       enumerable: true,
@@ -132,6 +133,7 @@ var Lifespan = (function () {
         this.onRelease(function () {
           return clearTimeout(i);
         });
+        return this;
       },
       writable: true,
       enumerable: true,
@@ -147,18 +149,7 @@ var Lifespan = (function () {
         this.onRelease(function () {
           return clearImmediate(i);
         });
-      },
-      writable: true,
-      enumerable: true,
-      configurable: true
-    },
-    Promise: {
-      value: function () {
-        var _this = this;
-        // returns a Promise that will be resolved after release (deferred callback)
-        return new _Promise(function (resolve) {
-          return _this.onRelease(resolve);
-        });
+        return this;
       },
       writable: true,
       enumerable: true,
@@ -173,6 +164,19 @@ var Lifespan = (function () {
         var i = _requestAnimationFrame(fn);
         this.onRelease(function () {
           return cancelAnimationFrame(i);
+        });
+        return this;
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    Promise: {
+      value: function () {
+        var _this = this;
+        // returns a Promise that will be resolved after release (deferred callback)
+        return new _Promise(function (resolve) {
+          return _this.onRelease(resolve);
         });
       },
       writable: true,
