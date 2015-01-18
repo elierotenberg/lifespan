@@ -55,6 +55,10 @@ Promise, when properly implemented (like `bluebird` does) are great. Really. But
 
 Thats where Lifespan comes handy.
 
+### React Mixin
+
+Lifespan comes with a ridiculously simple, yet very useful React component mixin. It adds the property `this.lifespan` to the component, which is released upon `componentWillUnmount`.
+It is lazily initialized through a memoized getter.
 
 ### Use cases ?
 

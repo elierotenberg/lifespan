@@ -5,6 +5,10 @@ var _prototypeProperties = function (child, staticProps, instanceProps) {
   if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
 };
 
+var _interopRequire = function (obj) {
+  return obj && (obj["default"] || obj);
+};
+
 require("6to5/polyfill");
 var _ = require("lodash");
 var should = require("should");
@@ -22,6 +26,7 @@ var _setTimeout = global.setTimeout;
 var _setImmediate = global.setImmediate;
 var _Promise = global.Promise;
 var _requestAnimationFrame = global.requestAnimationFrame;
+var Mixin = _interopRequire(require("./Mixin"));
 
 var Lifespan = (function () {
   function Lifespan() {
@@ -32,10 +37,8 @@ var Lifespan = (function () {
 
   _prototypeProperties(Lifespan, {
     race: {
-      value: function () {
-        var lifespans = [];
-
-        for (var _key = 0; _key < arguments.length; _key++) {
+      value: function race() {
+        for (var _len = arguments.length, lifespans = Array(_len), _key = 0; _key < _len; _key++) {
           lifespans[_key] = arguments[_key];
         }
 
@@ -51,10 +54,8 @@ var Lifespan = (function () {
       configurable: true
     },
     join: {
-      value: function () {
-        var lifespans = [];
-
-        for (var _key2 = 0; _key2 < arguments.length; _key2++) {
+      value: function join() {
+        for (var _len2 = arguments.length, lifespans = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           lifespans[_key2] = arguments[_key2];
         }
 
@@ -77,7 +78,7 @@ var Lifespan = (function () {
     }
   }, {
     release: {
-      value: function () {
+      value: function release() {
         if (this._released) {
           return;
         }
@@ -93,7 +94,7 @@ var Lifespan = (function () {
       configurable: true
     },
     onRelease: {
-      value: function (fn) {
+      value: function onRelease(fn) {
         if (this._released) {
           fn();
         } else {
@@ -106,7 +107,7 @@ var Lifespan = (function () {
       configurable: true
     },
     setInterval: {
-      value: function (fn, period) {
+      value: function setInterval(fn, period) {
         // set an interval that will be cleared upon release
         if (__DEV__) {
           fn.should.be.a.Function;
@@ -123,7 +124,7 @@ var Lifespan = (function () {
       configurable: true
     },
     setTimeout: {
-      value: function (fn, delay) {
+      value: function setTimeout(fn, delay) {
         // set a timeout that will be cleared upon release
         if (__DEV__) {
           fn.should.be.a.Function;
@@ -140,7 +141,7 @@ var Lifespan = (function () {
       configurable: true
     },
     setImmediate: {
-      value: function (fn) {
+      value: function setImmediate(fn) {
         // set an immediate that will be cleared upon release
         if (__DEV__) {
           fn.should.be.a.Function;
@@ -156,7 +157,7 @@ var Lifespan = (function () {
       configurable: true
     },
     requestAnimationFrame: {
-      value: function (fn) {
+      value: function requestAnimationFrame(fn) {
         // sets a next animation frame callback  that will be cleared upon release
         if (__DEV__) {
           fn.should.be.a.Function;
@@ -172,7 +173,7 @@ var Lifespan = (function () {
       configurable: true
     },
     Promise: {
-      value: function () {
+      value: function Promise() {
         var _this = this;
         // returns a Promise that will be resolved after release (deferred callback)
         return new _Promise(function (resolve) {
@@ -187,5 +188,7 @@ var Lifespan = (function () {
 
   return Lifespan;
 })();
+
+Lifespan.Mixin = Mixin;
 
 module.exports = Lifespan;
