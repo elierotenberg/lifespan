@@ -1,7 +1,7 @@
 export default (Lifespan) => ({
   _lifespan: null,
 
-  get lifespan() {
+  getLifespan() {
     if(!this._lifespan) {
       this._lifespan = new Lifespan();
     }

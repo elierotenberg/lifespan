@@ -13,24 +13,20 @@ if (__DEV__) {
   Error.stackTraceLimit = Infinity;
 }
 module.exports = function (Lifespan) {
-  return Object.defineProperties({
+  return {
     _lifespan: null,
+
+    getLifespan: function getLifespan() {
+      if (!this._lifespan) {
+        this._lifespan = new Lifespan();
+      }
+      return this._lifespan;
+    },
 
     componentWillUnmount: function componentWillUnmount() {
       if (this._lifespan) {
         this._lifespan.release();
         this._lifespan = null;
       }
-    } }, {
-    lifespan: {
-      get: function () {
-        if (!this._lifespan) {
-          this._lifespan = new Lifespan();
-        }
-        return this._lifespan;
-      },
-      enumerable: true,
-      configurable: true
-    }
-  });
+    } };
 };

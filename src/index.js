@@ -3,6 +3,7 @@ const _setTimeout = global.setTimeout;
 const _setImmediate = global.setImmediate;
 const _Promise = global.Promise;
 const _requestAnimationFrame = global.requestAnimationFrame;
+
 import Mixin from './Mixin';
 
 class Lifespan {

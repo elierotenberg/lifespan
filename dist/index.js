@@ -26,6 +26,7 @@ var _setTimeout = global.setTimeout;
 var _setImmediate = global.setImmediate;
 var _Promise = global.Promise;
 var _requestAnimationFrame = global.requestAnimationFrame;
+
 var Mixin = _interopRequire(require("./Mixin"));
 
 var Lifespan = (function () {

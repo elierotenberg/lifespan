@@ -57,8 +57,8 @@ Thats where Lifespan comes handy.
 
 ### React Mixin
 
-Lifespan comes with a ridiculously simple, yet very useful React component mixin. It adds the property `this.lifespan` to the component, which is released upon `componentWillUnmount`.
-It is lazily initialized through a memoized getter.
+Lifespan comes with a ridiculously simple, yet very useful React component mixin. It adds the method `this.getLifespan()` to the component, which is released upon `componentWillUnmount`.
+It is lazily initialized and memoized so that the lifespan instance is only created if needed, and created once per component.
 
 ### Use cases ?
 
