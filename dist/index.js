@@ -189,6 +189,6 @@ var Lifespan = (function () {
   return Lifespan;
 })();
 
-Lifespan.Mixin = Mixin;
+Lifespan.Mixin = Mixin(Lifespan);
 
 module.exports = Lifespan;

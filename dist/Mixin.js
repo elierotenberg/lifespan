@@ -1,9 +1,5 @@
 "use strict";
 
-var _interopRequire = function (obj) {
-  return obj && (obj["default"] || obj);
-};
-
 require("6to5/polyfill");
 var _ = require("lodash");
 var should = require("should");
@@ -16,27 +12,25 @@ if (__DEV__) {
   Promise.longStackTraces();
   Error.stackTraceLimit = Infinity;
 }
-var Lifespan = _interopRequire(require("../"));
+module.exports = function (Lifespan) {
+  return Object.defineProperties({
+    _lifespan: null,
 
-var Mixin = Object.defineProperties({
-  _lifespan: null,
-
-  componentWillUnmount: function componentWillUnmount() {
-    if (this._lifespan) {
-      this._lifespan.release();
-      this._lifespan = null;
-    }
-  } }, {
-  lifespan: {
-    get: function () {
-      if (!this._lifespan) {
-        this._lifespan = new Lifespan();
+    componentWillUnmount: function componentWillUnmount() {
+      if (this._lifespan) {
+        this._lifespan.release();
+        this._lifespan = null;
       }
-      return this._lifespan;
-    },
-    enumerable: true,
-    configurable: true
-  }
-});
-
-module.exports = Mixin;
+    } }, {
+    lifespan: {
+      get: function () {
+        if (!this._lifespan) {
+          this._lifespan = new Lifespan();
+        }
+        return this._lifespan;
+      },
+      enumerable: true,
+      configurable: true
+    }
+  });
+};

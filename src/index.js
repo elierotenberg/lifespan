@@ -93,6 +93,6 @@ class Lifespan {
   }
 }
 
-Lifespan.Mixin = Mixin;
+Lifespan.Mixin = Mixin(Lifespan);
 
 export default Lifespan;

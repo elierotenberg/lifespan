@@ -1,6 +1,4 @@
-import Lifespan from '../';
-
-const Mixin = {
+export default (Lifespan) => ({
   _lifespan: null,
 
   get lifespan() {
@@ -16,6 +14,4 @@ const Mixin = {
       this._lifespan = null;
     }
   },
-};
-
-export default Mixin;
+});
