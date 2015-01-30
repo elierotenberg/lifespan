@@ -1,13 +1,8 @@
 "use strict";
 
-var _prototypeProperties = function (child, staticProps, instanceProps) {
-  if (staticProps) Object.defineProperties(child, staticProps);
-  if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-};
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-var _interopRequire = function (obj) {
-  return obj && (obj["default"] || obj);
-};
+var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
 require("6to5/polyfill");
 var _ = require("lodash");
@@ -33,7 +28,7 @@ var Lifespan = (function () {
   function Lifespan() {
     this._callbacks = [];
     this._released = false;
-    _.bindAll(this);
+    _.bindAll(this, ["release", "onRelease", "setInterval", "setTimeout", "setImmediate", "requestAnimationFrame", "Promise"]);
   }
 
   _prototypeProperties(Lifespan, {
@@ -51,13 +46,12 @@ var Lifespan = (function () {
         return r;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     join: {
       value: function join() {
-        for (var _len2 = arguments.length, lifespans = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          lifespans[_key2] = arguments[_key2];
+        for (var _len = arguments.length, lifespans = Array(_len), _key = 0; _key < _len; _key++) {
+          lifespans[_key] = arguments[_key];
         }
 
         // creates a new lifespan, which is released when all the lifespans are released
@@ -74,7 +68,6 @@ var Lifespan = (function () {
         return r;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     }
   }, {
@@ -91,7 +84,6 @@ var Lifespan = (function () {
         return this;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     onRelease: {
@@ -104,7 +96,6 @@ var Lifespan = (function () {
         return this;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     setInterval: {
@@ -121,7 +112,6 @@ var Lifespan = (function () {
         return this;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     setTimeout: {
@@ -138,7 +128,6 @@ var Lifespan = (function () {
         return this;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     setImmediate: {
@@ -154,7 +143,6 @@ var Lifespan = (function () {
         return this;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     requestAnimationFrame: {
@@ -170,7 +158,6 @@ var Lifespan = (function () {
         return this;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     Promise: {
@@ -182,7 +169,6 @@ var Lifespan = (function () {
         });
       },
       writable: true,
-      enumerable: true,
       configurable: true
     }
   });

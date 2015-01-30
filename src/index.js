@@ -10,7 +10,15 @@ class Lifespan {
   constructor() {
     this._callbacks = [];
     this._released = false;
-    _.bindAll(this);
+    _.bindAll(this, [
+      'release',
+      'onRelease',
+      'setInterval',
+      'setTimeout',
+      'setImmediate',
+      'requestAnimationFrame',
+      'Promise',
+    ]);
   }
 
   release() {
