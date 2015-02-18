@@ -4,7 +4,9 @@ var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["defau
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
-require("6to5/polyfill");
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+require("babel/polyfill");
 var _ = require("lodash");
 var should = require("should");
 var Promise = (global || window).Promise = require("bluebird");
@@ -26,6 +28,8 @@ var Mixin = _interopRequire(require("./Mixin"));
 
 var Lifespan = (function () {
   function Lifespan() {
+    _classCallCheck(this, Lifespan);
+
     this._callbacks = [];
     this._released = false;
     _.bindAll(this, ["release", "onRelease", "setInterval", "setTimeout", "setImmediate", "requestAnimationFrame", "Promise"]);

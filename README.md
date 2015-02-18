@@ -12,7 +12,6 @@ let count = 0;
 const a = new Lifespan().onRelease(() => released.a = true);
 const i = setInterval(() => count = count + 1, 1000);
 a.onRelease(() => clearInterval(i));
-
 released.b = false;
 const b = new Lifespan();
 b.onRelease(() => released.b = true);
