@@ -23,6 +23,7 @@ released.c4 = false;
 const c4 = Lifespan.race(c1, c2, c3).onRelease(() => released.c4 = true);
 c1.release();
 released.c4.should.be.true;
+void c4;
 
 released.d1 = released.d2 = released.d3 = false;
 const d1 = new Lifespan().onRelease(() => released.d1 = true);
@@ -32,6 +33,7 @@ d1.release();
 released.d3.should.be.false;
 d2.release();
 released.d3.should.be.true;
+void d3;
 
 setTimeout(() => {
   released.a.should.be.false;

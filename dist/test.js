@@ -1,26 +1,29 @@
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireDefault = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-require("babel/polyfill");
-var _ = require("lodash");
-var should = require("should");
-var Promise = (global || window).Promise = require("bluebird");
-var __DEV__ = process.env.NODE_ENV !== "production";
+var _Lifespan = require('../');
+
+var _Lifespan2 = _interopRequireDefault(_Lifespan);
+
+require('babel/polyfill');
+var _ = require('lodash');
+var should = require('should');
+var Promise = (global || window).Promise = require('bluebird');
+var __DEV__ = process.env.NODE_ENV !== 'production';
 var __PROD__ = !__DEV__;
-var __BROWSER__ = typeof window === "object";
+var __BROWSER__ = typeof window === 'object';
 var __NODE__ = !__BROWSER__;
 if (__DEV__) {
   Promise.longStackTraces();
   Error.stackTraceLimit = Infinity;
 }
-var Lifespan = _interopRequire(require("../"));
 
 var released = {};
 
 released.a = false;
 var count = 0;
-var a = new Lifespan().onRelease(function () {
+var a = new _Lifespan2['default']().onRelease(function () {
   return released.a = true;
 });
 var i = setInterval(function () {
@@ -31,7 +34,7 @@ a.onRelease(function () {
 });
 
 released.b = false;
-var b = new Lifespan();
+var b = new _Lifespan2['default']();
 b.onRelease(function () {
   return released.b = true;
 });
@@ -41,44 +44,46 @@ b.onRelease(function () {
 });
 
 released.c1 = released.c2 = released.c3 = false;
-var c1 = new Lifespan().onRelease(function () {
+var c1 = new _Lifespan2['default']().onRelease(function () {
   return released.c1 = true;
 });
-var c2 = new Lifespan().onRelease(function () {
+var c2 = new _Lifespan2['default']().onRelease(function () {
   return released.c2 = true;
 });
-var c3 = new Lifespan().onRelease(function () {
+var c3 = new _Lifespan2['default']().onRelease(function () {
   return released.c3 = true;
 });
 
 released.c4 = false;
-var c4 = Lifespan.race(c1, c2, c3).onRelease(function () {
+var c4 = _Lifespan2['default'].race(c1, c2, c3).onRelease(function () {
   return released.c4 = true;
 });
 c1.release();
-released.c4.should.be["true"];
+released.c4.should.be['true'];
+void c4;
 
 released.d1 = released.d2 = released.d3 = false;
-var d1 = new Lifespan().onRelease(function () {
+var d1 = new _Lifespan2['default']().onRelease(function () {
   return released.d1 = true;
 });
-var d2 = new Lifespan().onRelease(function () {
+var d2 = new _Lifespan2['default']().onRelease(function () {
   return released.d2 = true;
 });
-var d3 = Lifespan.join(d1, d2).onRelease(function () {
+var d3 = _Lifespan2['default'].join(d1, d2).onRelease(function () {
   return released.d3 = true;
 });
 d1.release();
-released.d3.should.be["false"];
+released.d3.should.be['false'];
 d2.release();
-released.d3.should.be["true"];
+released.d3.should.be['true'];
+void d3;
 
 setTimeout(function () {
-  released.a.should.be["false"];
+  released.a.should.be['false'];
   count.should.be.exactly(2);
 }, 2200);
 
 setTimeout(function () {
-  released.a.should.be["true"];
+  released.a.should.be['true'];
   count.should.be.exactly(5);
 }, 6000);

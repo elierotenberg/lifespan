@@ -4,7 +4,7 @@ const _setImmediate = global.setImmediate;
 const _Promise = global.Promise;
 const _requestAnimationFrame = global.requestAnimationFrame;
 
-import Mixin from './Mixin';
+import createMixin from './Mixin';
 
 class Lifespan {
   constructor() {
@@ -23,7 +23,7 @@ class Lifespan {
 
   release() {
     if(this._released) {
-      return;
+      return this;
     }
     this._released = true;
     this._callbacks.forEach((fn) => fn());
@@ -102,6 +102,6 @@ class Lifespan {
   }
 }
 
-Lifespan.Mixin = Mixin(Lifespan);
+Lifespan.Mixin = createMixin(Lifespan);
 
 export default Lifespan;
