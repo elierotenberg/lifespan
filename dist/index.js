@@ -67,8 +67,9 @@ var Lifespan = (function () {
     }
   }, {
     key: 'setInterval',
+
+    // set an interval that will be cleared upon release
     value: function setInterval(fn, period) {
-      // set an interval that will be cleared upon release
       if (__DEV__) {
         fn.should.be.a.Function;
         period.should.be.a.Number.which.is.not.below(0);
@@ -81,8 +82,9 @@ var Lifespan = (function () {
     }
   }, {
     key: 'setTimeout',
+
+    // set a timeout that will be cleared upon release
     value: function setTimeout(fn, delay) {
-      // set a timeout that will be cleared upon release
       if (__DEV__) {
         fn.should.be.a.Function;
         delay.should.be.a.Number.which.is.not.below(0);
@@ -95,8 +97,9 @@ var Lifespan = (function () {
     }
   }, {
     key: 'setImmediate',
+
+    // set an immediate that will be cleared upon release
     value: function setImmediate(fn) {
-      // set an immediate that will be cleared upon release
       if (__DEV__) {
         fn.should.be.a.Function;
       }
@@ -108,8 +111,9 @@ var Lifespan = (function () {
     }
   }, {
     key: 'requestAnimationFrame',
+
+    // sets a next animation frame callback  that will be cleared upon release
     value: function requestAnimationFrame(fn) {
-      // sets a next animation frame callback  that will be cleared upon release
       if (__DEV__) {
         fn.should.be.a.Function;
       }
@@ -121,22 +125,24 @@ var Lifespan = (function () {
     }
   }, {
     key: 'Promise',
+
+    // returns a Promise that will be resolved after release (deferred callback)
     value: function Promise() {
       var _this = this;
 
-      // returns a Promise that will be resolved after release (deferred callback)
       return new _Promise(function (resolve) {
         return _this.onRelease(resolve);
       });
     }
   }], [{
     key: 'race',
+
+    // creates a new lifespan, which is released when any of the lifespans are released
     value: function race() {
       for (var _len = arguments.length, lifespans = Array(_len), _key = 0; _key < _len; _key++) {
         lifespans[_key] = arguments[_key];
       }
 
-      // creates a new lifespan, which is released when any of the lifespans are released
       var r = new Lifespan();
       lifespans.forEach(function (lifespan) {
         return lifespan.onRelease(r.release);
@@ -145,12 +151,13 @@ var Lifespan = (function () {
     }
   }, {
     key: 'join',
+
+    // creates a new lifespan, which is released when all the lifespans are released
     value: function join() {
       for (var _len2 = arguments.length, lifespans = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         lifespans[_key2] = arguments[_key2];
       }
 
-      // creates a new lifespan, which is released when all the lifespans are released
       var countDown = lifespans.length;
       var r = new Lifespan();
       lifespans.forEach(function (lifespan) {

@@ -41,7 +41,8 @@ class Lifespan {
     return this;
   }
 
-  setInterval(fn, period) { // set an interval that will be cleared upon release
+  // set an interval that will be cleared upon release
+  setInterval(fn, period) {
     if(__DEV__) {
       fn.should.be.a.Function;
       period.should.be.a.Number.which.is.not.below(0);
@@ -51,7 +52,8 @@ class Lifespan {
     return this;
   }
 
-  setTimeout(fn, delay) { // set a timeout that will be cleared upon release
+  // set a timeout that will be cleared upon release
+  setTimeout(fn, delay) {
     if(__DEV__) {
       fn.should.be.a.Function;
       delay.should.be.a.Number.which.is.not.below(0);
@@ -61,7 +63,8 @@ class Lifespan {
     return this;
   }
 
-  setImmediate(fn) { // set an immediate that will be cleared upon release
+  // set an immediate that will be cleared upon release
+  setImmediate(fn) {
     if(__DEV__) {
       fn.should.be.a.Function;
     }
@@ -70,7 +73,8 @@ class Lifespan {
     return this;
   }
 
-  requestAnimationFrame(fn) { // sets a next animation frame callback  that will be cleared upon release
+  // sets a next animation frame callback  that will be cleared upon release
+  requestAnimationFrame(fn) {
     if(__DEV__) {
       fn.should.be.a.Function;
     }
@@ -79,17 +83,20 @@ class Lifespan {
     return this;
   }
 
-  Promise() { // returns a Promise that will be resolved after release (deferred callback)
+  // returns a Promise that will be resolved after release (deferred callback)
+  Promise() {
     return new _Promise((resolve) => this.onRelease(resolve));
   }
 
-  static race(...lifespans) { // creates a new lifespan, which is released when any of the lifespans are released
+  // creates a new lifespan, which is released when any of the lifespans are released
+  static race(...lifespans) {
     const r = new Lifespan();
     lifespans.forEach((lifespan) => lifespan.onRelease(r.release));
     return r;
   }
 
-  static join(...lifespans) { // creates a new lifespan, which is released when all the lifespans are released
+  // creates a new lifespan, which is released when all the lifespans are released
+  static join(...lifespans) {
     let countDown = lifespans.length;
     const r = new Lifespan();
     lifespans.forEach((lifespan) => lifespan.onRelease(() => {
