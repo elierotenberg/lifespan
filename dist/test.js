@@ -1,12 +1,11 @@
 'use strict';
 
-var _interopRequireDefault = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
 
-var _Lifespan = require('../');
+var _2 = require('../');
 
-var _Lifespan2 = _interopRequireDefault(_Lifespan);
+var _3 = _interopRequireDefault(_2);
 
-require('babel/polyfill');
 var _ = require('lodash');
 var should = require('should');
 var Promise = (global || window).Promise = require('bluebird');
@@ -23,7 +22,7 @@ var released = {};
 
 released.a = false;
 var count = 0;
-var a = new _Lifespan2['default']().onRelease(function () {
+var a = new _3['default']().onRelease(function () {
   return released.a = true;
 });
 var i = setInterval(function () {
@@ -34,7 +33,7 @@ a.onRelease(function () {
 });
 
 released.b = false;
-var b = new _Lifespan2['default']();
+var b = new _3['default']();
 b.onRelease(function () {
   return released.b = true;
 });
@@ -44,18 +43,18 @@ b.onRelease(function () {
 });
 
 released.c1 = released.c2 = released.c3 = false;
-var c1 = new _Lifespan2['default']().onRelease(function () {
+var c1 = new _3['default']().onRelease(function () {
   return released.c1 = true;
 });
-var c2 = new _Lifespan2['default']().onRelease(function () {
+var c2 = new _3['default']().onRelease(function () {
   return released.c2 = true;
 });
-var c3 = new _Lifespan2['default']().onRelease(function () {
+var c3 = new _3['default']().onRelease(function () {
   return released.c3 = true;
 });
 
 released.c4 = false;
-var c4 = _Lifespan2['default'].race(c1, c2, c3).onRelease(function () {
+var c4 = _3['default'].race(c1, c2, c3).onRelease(function () {
   return released.c4 = true;
 });
 c1.release();
@@ -63,13 +62,13 @@ released.c4.should.be['true'];
 void c4;
 
 released.d1 = released.d2 = released.d3 = false;
-var d1 = new _Lifespan2['default']().onRelease(function () {
+var d1 = new _3['default']().onRelease(function () {
   return released.d1 = true;
 });
-var d2 = new _Lifespan2['default']().onRelease(function () {
+var d2 = new _3['default']().onRelease(function () {
   return released.d2 = true;
 });
-var d3 = _Lifespan2['default'].join(d1, d2).onRelease(function () {
+var d3 = _3['default'].join(d1, d2).onRelease(function () {
   return released.d3 = true;
 });
 d1.release();
