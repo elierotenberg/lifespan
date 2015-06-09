@@ -18,20 +18,15 @@ var _Mixin2 = _interopRequireDefault(_Mixin);
 
 var _ = require('lodash');
 var should = require('should');
-var Promise = (global || window).Promise = require('bluebird');
+var _Promise = (global || window).Promise = require('bluebird');
 var __DEV__ = process.env.NODE_ENV !== 'production';
 var __PROD__ = !__DEV__;
 var __BROWSER__ = typeof window === 'object';
 var __NODE__ = !__BROWSER__;
 if (__DEV__) {
-  Promise.longStackTraces();
+  _Promise.longStackTraces();
   Error.stackTraceLimit = Infinity;
 }
-var _setInterval = global.setInterval;
-var _setTimeout = global.setTimeout;
-var _setImmediate = global.setImmediate;
-var _Promise = global.Promise;
-var _requestAnimationFrame = global.requestAnimationFrame;
 
 var Lifespan = (function () {
   function Lifespan() {
@@ -69,60 +64,100 @@ var Lifespan = (function () {
     key: 'setInterval',
 
     // set an interval that will be cleared upon release
-    value: function setInterval(fn, period) {
+    value: (function (_setInterval) {
+      function setInterval(_x, _x2) {
+        return _setInterval.apply(this, arguments);
+      }
+
+      setInterval.toString = function () {
+        return _setInterval.toString();
+      };
+
+      return setInterval;
+    })(function (fn, period) {
       if (__DEV__) {
         fn.should.be.a.Function;
         period.should.be.a.Number.which.is.not.below(0);
       }
-      var i = _setInterval(fn, period);
+      var i = setInterval(fn, period);
       this.onRelease(function () {
         return clearInterval(i);
       });
       return this;
-    }
+    })
   }, {
     key: 'setTimeout',
 
     // set a timeout that will be cleared upon release
-    value: function setTimeout(fn, delay) {
+    value: (function (_setTimeout) {
+      function setTimeout(_x3, _x4) {
+        return _setTimeout.apply(this, arguments);
+      }
+
+      setTimeout.toString = function () {
+        return _setTimeout.toString();
+      };
+
+      return setTimeout;
+    })(function (fn, delay) {
       if (__DEV__) {
         fn.should.be.a.Function;
         delay.should.be.a.Number.which.is.not.below(0);
       }
-      var i = _setTimeout(fn, delay);
+      var i = setTimeout(fn, delay);
       this.onRelease(function () {
         return clearTimeout(i);
       });
       return this;
-    }
+    })
   }, {
     key: 'setImmediate',
 
     // set an immediate that will be cleared upon release
-    value: function setImmediate(fn) {
+    value: (function (_setImmediate) {
+      function setImmediate(_x5) {
+        return _setImmediate.apply(this, arguments);
+      }
+
+      setImmediate.toString = function () {
+        return _setImmediate.toString();
+      };
+
+      return setImmediate;
+    })(function (fn) {
       if (__DEV__) {
         fn.should.be.a.Function;
       }
-      var i = _setImmediate(fn);
+      var i = setImmediate(fn);
       this.onRelease(function () {
         return clearImmediate(i);
       });
       return this;
-    }
+    })
   }, {
     key: 'requestAnimationFrame',
 
     // sets a next animation frame callback  that will be cleared upon release
-    value: function requestAnimationFrame(fn) {
+    value: (function (_requestAnimationFrame) {
+      function requestAnimationFrame(_x6) {
+        return _requestAnimationFrame.apply(this, arguments);
+      }
+
+      requestAnimationFrame.toString = function () {
+        return _requestAnimationFrame.toString();
+      };
+
+      return requestAnimationFrame;
+    })(function (fn) {
       if (__DEV__) {
         fn.should.be.a.Function;
       }
-      var i = _requestAnimationFrame(fn);
+      var i = requestAnimationFrame(fn);
       this.onRelease(function () {
         return cancelAnimationFrame(i);
       });
       return this;
-    }
+    })
   }, {
     key: 'Promise',
 

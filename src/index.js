@@ -1,9 +1,3 @@
-const _setInterval = global.setInterval;
-const _setTimeout = global.setTimeout;
-const _setImmediate = global.setImmediate;
-const _Promise = global.Promise;
-const _requestAnimationFrame = global.requestAnimationFrame;
-
 import createMixin from './Mixin';
 
 class Lifespan {
@@ -47,7 +41,7 @@ class Lifespan {
       fn.should.be.a.Function;
       period.should.be.a.Number.which.is.not.below(0);
     }
-    const i = _setInterval(fn, period);
+    const i = setInterval(fn, period);
     this.onRelease(() => clearInterval(i));
     return this;
   }
@@ -58,7 +52,7 @@ class Lifespan {
       fn.should.be.a.Function;
       delay.should.be.a.Number.which.is.not.below(0);
     }
-    const i = _setTimeout(fn, delay);
+    const i = setTimeout(fn, delay);
     this.onRelease(() => clearTimeout(i));
     return this;
   }
@@ -68,7 +62,7 @@ class Lifespan {
     if(__DEV__) {
       fn.should.be.a.Function;
     }
-    const i = _setImmediate(fn);
+    const i = setImmediate(fn);
     this.onRelease(() => clearImmediate(i));
     return this;
   }
@@ -78,14 +72,14 @@ class Lifespan {
     if(__DEV__) {
       fn.should.be.a.Function;
     }
-    const i = _requestAnimationFrame(fn);
+    const i = requestAnimationFrame(fn);
     this.onRelease(() => cancelAnimationFrame(i));
     return this;
   }
 
   // returns a Promise that will be resolved after release (deferred callback)
   Promise() {
-    return new _Promise((resolve) => this.onRelease(resolve));
+    return new Promise((resolve) => this.onRelease(resolve));
   }
 
   // creates a new lifespan, which is released when any of the lifespans are released
