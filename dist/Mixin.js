@@ -34,7 +34,8 @@ exports['default'] = function (Lifespan) {
         this._lifespan.release();
         this._lifespan = null;
       }
-    } };
+    }
+  };
 };
 
 module.exports = exports['default'];
