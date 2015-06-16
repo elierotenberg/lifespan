@@ -1,6 +1,6 @@
 {
   "name": "lifespan",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "",
   "license": "MIT",
   "author": "Elie Rotenberg <elie@rotenberg.io>",
@@ -9,7 +9,6 @@
     "type": "git",
     "url": "https://github.com/elierotenberg/lifespan.git"
   },
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/elierotenberg/lifespan/issues"
   },
