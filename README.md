@@ -1,7 +1,6 @@
 Lifespan
 ========
 
-
 Reify the lifespan of an object, a component, whatever... Its really just like an never-failing Promise which executes its callback synchronously.
 
 ```js
@@ -46,6 +45,12 @@ setTimeout(() => {
   released.a.should.be.true;
   count.should.be.exactly(5);
 }, 6000);
+
+// adds 'this.getLifespan()' method.
+@lifespan
+class MyComponent extends React.Component {
+  ...
+}
 ```
 
 ### Why not just use Promise?
@@ -54,11 +59,15 @@ Promise, when properly implemented (like `bluebird` does) are great. Really. But
 
 Thats where Lifespan comes handy.
 
-### React Mixin
+### React.Component decorator
 
-Lifespan comes with a ridiculously simple, yet very useful React component mixin. It adds the method `this.getLifespan()` to the component, which is released upon `componentWillUnmount`.
+Lifespan comes with a ridiculously simple, yet very useful `React.Component` decorator. It adds the method `this.getLifespan()` to the component, which is released upon `componentWillUnmount`.
 It is lazily initialized and memoized so that the lifespan instance is only created if needed, and created once per component.
 
 ### Use cases ?
 
 EventEmitters, React Components, really anything when cleanup has to be performed at some point which is triggered manually.
+
+### Usage
+
+This lib requires usage of `babel` at the top level, as it is written in es6/7.
