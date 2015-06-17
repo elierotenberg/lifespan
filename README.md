@@ -70,4 +70,4 @@ EventEmitters, React Components, really anything when cleanup has to be performe
 
 ### Usage
 
-This lib requires usage of `babel` at the top level, as it is written in es6/7.
+This module is written in ES6/7. You will need `babel` to run it.
